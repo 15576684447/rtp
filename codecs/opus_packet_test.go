@@ -1,15 +1,12 @@
 package codecs
 
 import (
-	"fmt"
+	"errors"
 	"testing"
 )
 
 func TestOpusPacket_Unmarshal(t *testing.T) {
 	pck := OpusPacket{}
-
-	errNilPacket := fmt.Errorf("invalid nil packet")
-	errPayloadTooSmall := fmt.Errorf("Payload is not large enough")
 
 	// Nil packet
 	raw, err := pck.Unmarshal(nil)
@@ -25,8 +22,8 @@ func TestOpusPacket_Unmarshal(t *testing.T) {
 	if raw != nil {
 		t.Fatal("Result should be nil in case of error")
 	}
-	if err == nil || err.Error() != errPayloadTooSmall.Error() {
-		t.Fatal("Error should be:", errPayloadTooSmall)
+	if !errors.Is(err, errShortPacket) {
+		t.Fatal("Error should be:", errShortPacket)
 	}
 
 	// Normal packet
